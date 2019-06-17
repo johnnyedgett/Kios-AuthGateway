@@ -1,9 +1,17 @@
 package com.kios.app.agw.entities;
 
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
@@ -20,6 +28,17 @@ public class User {
 	private String email;
 	private String firstName;
 	private String lastName;
+	private LocalDateTime createdDate;
+	private LocalDateTime modifiedDate;
+	private Long orgId;
+	public Long getOrgId() {
+		return orgId;
+	}
+	public void setOrgId(Long orgId) {
+		this.orgId = orgId;
+	}
+	//	@ElementCollection
+//	private Set<Long> orgIds = new HashSet<Long>();
 	private boolean enabled;
     private boolean tokenExpired;
 // 
@@ -65,6 +84,24 @@ public class User {
 	public Long getId() {
 		return id;
 	}
+	public LocalDateTime getCreatedDate() {
+		return createdDate;
+	}
+	public void setCreatedDate(LocalDateTime createdDate) {
+		this.createdDate = createdDate;
+	}
+	public LocalDateTime getModifiedDate() {
+		return modifiedDate;
+	}
+	public void setModifiedDate(LocalDateTime modifiedDate) {
+		this.modifiedDate = modifiedDate;
+	}
+//	public Set<Long> getOrgIds() {
+//		return orgIds;
+//	}
+//	public void setOrgIds(Set<Long> orgIds) {
+//		this.orgIds = orgIds;
+//	}
     public boolean isEnabled() {
 		return enabled;
 	}
@@ -76,6 +113,14 @@ public class User {
 	}
 	public void setTokenExpired(boolean tokenExpired) {
 		this.tokenExpired = tokenExpired;
+	}
+	@PrePersist()
+	public void prePersist() {
+		createdDate = LocalDateTime.now();
+	}
+	@PreUpdate()
+	public void preUpdate() {
+		modifiedDate = LocalDateTime.now();
 	}
 //	public Collection<Role> getRoles() {
 //		return roles;
