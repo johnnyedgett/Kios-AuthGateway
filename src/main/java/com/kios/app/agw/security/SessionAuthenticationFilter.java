@@ -21,12 +21,7 @@ public class SessionAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 		try {
 			SecurityContext sc = SecurityContextHolder.getContext();
-			
-			if(!(sc.getAuthentication() instanceof AnonymousAuthenticationToken)) {
-				LOG.info("Curious when this will run... ");
-			} else {
-				// Can do something else here with the unauthenticated user
-			}
+//			if(!(sc.getAuthentication() instanceof AnonymousAuthenticationToken)) { } else { }
 			
 		} catch (Exception e) {
 			e.getMessage();

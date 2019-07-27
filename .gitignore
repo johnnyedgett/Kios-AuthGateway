@@ -32,3 +32,6 @@ build/
 
 ### System ###
 .DS_STORE
+
+### Environment ###
+.env

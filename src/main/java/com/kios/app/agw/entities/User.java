@@ -22,12 +22,13 @@ public class User {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
+	private String email;
 	private String username;
 	@JsonProperty(access=Access.WRITE_ONLY)
 	private String password;
-	private String email;
 	private String firstName;
 	private String lastName;
+	private boolean verified;
 	private LocalDateTime createdDate;
 	private LocalDateTime modifiedDate;
 	private Long orgId;
@@ -128,4 +129,10 @@ public class User {
 //	public void setRoles(Collection<Role> roles) {
 //		this.roles = roles;
 //	}
+	public boolean isVerified() {
+		return verified;
+	}
+	public void setVerified(boolean verified) {
+		this.verified = verified;
+	}
 }

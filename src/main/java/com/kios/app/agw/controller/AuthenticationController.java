@@ -1,16 +1,11 @@
 package com.kios.app.agw.controller;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.AbstractEnvironment;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.MapPropertySource;
-import org.springframework.core.env.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -29,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.kios.app.agw.entities.User;
 import com.kios.app.agw.repository.UserRepository;
 import com.kios.app.agw.security.UserPrincipal;
+import com.kios.app.agw.service.AuthenticationService;
 import com.kios.app.agw.util.Response;
 
 @RestController
@@ -45,7 +41,7 @@ public class AuthenticationController {
 	AuthenticationManager authenticationManager;
 	
 	@Autowired
-	Environment env;
+	AuthenticationService authenticationService;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(AuthenticationController.class);
 	@GetMapping("/hello")
@@ -53,40 +49,13 @@ public class AuthenticationController {
 		return "Hello from the auth gateway.";
 	}
 	
-	@GetMapping("/env")
-	public Map<String, Object> getEnvironmentVariables(){
-		Map<String, Object> map = new HashMap();
-        for(Iterator it = ((AbstractEnvironment) env).getPropertySources().iterator(); it.hasNext(); ) {
-            PropertySource propertySource = (PropertySource) it.next();
-            if (propertySource instanceof MapPropertySource) {
-                map.putAll(((MapPropertySource) propertySource).getSource());
-            }
-        }
-		return map;
-	}
-	
 	@PostMapping("/register")
 	public @ResponseBody ResponseEntity<User> registerNewUser(@RequestBody User user) {
-		User toSave = new User();
-		toSave.setEmail(user.getEmail());
-		toSave.setFirstName(user.getFirstName());
-		toSave.setLastName(user.getLastName());
-		toSave.setUsername(user.getUsername());
-		
-		// TODO: User roles.
-		// toSave.setUserRoles(new ArrayList<>());
-		// TODO: Some sort of way of 'trusting' a user ornot?
-		toSave.setEnabled(true);
-
-		toSave.setPassword(passwordEncoder.encode(user.getPassword()));
-
-		User saved = userRepository.save(toSave);
-		
-		if(saved!=null) {
-			// should set the user here?
-			return Response.ok().build();
+		User u = authenticationService.registerUser(user);
+		if(u!=null) {
+			return new Response<>(u, HttpStatus.ACCEPTED);
 		} else {
-			return Response.badRequest().build();
+			return new Response<>(null, HttpStatus.BAD_REQUEST);
 		}
 	}
 	
